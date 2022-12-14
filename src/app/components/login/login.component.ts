@@ -10,19 +10,32 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  message:string="";
+  message: string = "";
 
-  loginForm!:FormGroup;
-  constructor(private fb:FormBuilder) { }
+  loginForm!: FormGroup;
+  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) { }
 
   ngOnInit(): void {
     this.loginForm = this.fb.nonNullable.group({
-      login:['', Validators.required],
-      password:['', Validators.required]
+      login: ['', Validators.required],
+      password: ['', Validators.required]
     })
+
   }
 
-  onSubmit(){
-   
-  } 
+  onSubmit() {
+    if (this.loginForm.value) {
+      if (this.auth.login(this.loginForm.value.login, this.loginForm.value.password) == "employe") {
+        localStorage.setItem('role', "emp");
+        this.router.navigateByUrl('emp');
+      } else if (this.auth.login(this.loginForm.value.login, this.loginForm.value.password) == "directeur") {
+        localStorage.setItem('role', "dir");
+
+        this.router.navigateByUrl('dir');
+
+      }
+      else
+        this.message = "eruur";
+    }
+  }
 }
